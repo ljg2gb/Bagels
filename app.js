@@ -1,39 +1,19 @@
-const newBagelForm = document.querySelector('#create-bagel-form')
-const editBagelForm = document.querySelector('#edit-bagel-form')
 const url = "http://bagel-api-fis.herokuapp.com/bagels/"
+const newBagelForm = document.querySelector('#create-bagel-form')
 
-fetch(url)
+const bagelInfo = {title:'This is the best bagel app', like_count:22,
+ image: 'https://images.unsplash.com/photo-1518562923427-19e694fbd8e9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60'}
+
+const title = document.querySelector('#title')
+title.textContent = bagelInfo.title
+
+const image = document.querySelector('#image')
+image.innerHTML = `<img src="${bagelInfo.image}" alt="bagels">`
+
+ fetch(url)
     .then(response => response.json())
-    .then(result => displayBagels(result))
+    .then(bagels => bagels.map(displayBagel))
 
-function displayBagels(bagels) {
-    bagels.forEach(bagel =>
-        displayBagel(bagel))
-}
-
-function displayBagel(bagel) {
-    const div = document.createElement('div')
-
-    const h3 = document.createElement('h3')
-    h3.textContent = bagel.type
-
-    const p = document.createElement('p')
-    p.textContent = bagel.rating
-
-    const deleteButton = document.createElement('button')
-    deleteButton.textContent = "Delete"
-    div.append(h3,p,deleteButton)
-
-    deleteButton.addEventListener('click', event => {
-        div.remove()
-         
-        fetch(url + bagel.id, {
-            method: "DELETE"
-        })
-    })
-
-    document.body.append(div)
-}
 
 newBagelForm.addEventListener('submit', event => {
     event.preventDefault()
@@ -41,10 +21,9 @@ newBagelForm.addEventListener('submit', event => {
     const type = formData.get('type')
     const rating = formData.get('rating')
     const newBagel = {type, rating}
-    console.log(newBagel)
 
     displayBagel(newBagel)
-
+   
     fetch(url, {
         method: "POST",
         headers: {
@@ -55,5 +34,68 @@ newBagelForm.addEventListener('submit', event => {
             rating: rating
         })
     })
-})
+}) 
+function displayBagel(bagel) {
+    let likes = document.createElement('p')
+    const card = document.createElement('div')
+    card.append(
+        settingBagelName(bagel),
+        settingBagelRating(bagel),
+        settingBagelLikes(bagel, likes),
+        settingBagelLikeButton(bagel, likes),
+        settingBagelDeleteButton(bagel)
+        )
+    document.body.append(card)
+
+    // likeButton.addEventListener("click", event => {
+    //     likes.innerHTML = `likes: ${bagelInfo.like_count++}`
+    // })
+
+    settingBagelDeleteButton(bagel).addEventListener('click', event => {
+        console.log(card)
+        card.remove()
+         
+        fetch(url + bagel.id, {
+            method: "DELETE"
+        })
+    })
+}
+
+function settingBagelName(bagel) {
+    const h3 = document.createElement('h3')
+    h3.textContent = bagel.type
+
+    return h3
+}
+
+function settingBagelRating(bagel) {
+    const rating = document.createElement('p')
+    rating.textContent = `rating: ${bagel.rating}`
+
+    return rating
+}
+
+function settingBagelLikes(bagel,likes) {
+    console.log(likes)
+    likes.innerHTML = `likes: ${bagelInfo.like_count}`
+
+    return likes
+}
+
+function settingBagelLikeButton(bagel, likes) {
+    const likeButton = document.createElement('button')
+    likeButton.textContent = "<3"
+    likeButton.addEventListener("click", event => {
+        likes.innerHTML = `likes: ${bagelInfo.like_count++}`
+    })
+    
+    return likeButton
+}
+
+function settingBagelDeleteButton(bagel) {
+    const deleteButton = document.createElement('button')
+    deleteButton.textContent = "Delete"
+
+    return deleteButton
+}
 
