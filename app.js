@@ -35,30 +35,31 @@ newBagelForm.addEventListener('submit', event => {
         })
     })
 }) 
+
 function displayBagel(bagel) {
     let likes = document.createElement('p')
+    const deleteButton = document.createElement('button')
+    deleteButton.textContent = "Delete"
     const card = document.createElement('div')
+
     card.append(
         settingBagelName(bagel),
         settingBagelRating(bagel),
-        settingBagelLikes(bagel, likes),
-        settingBagelLikeButton(bagel, likes),
-        settingBagelDeleteButton(bagel)
+        settingBagelLikes(likes),
+        settingBagelLikeButton(likes),
+        deleteButton
         )
-    document.body.append(card)
 
-    // likeButton.addEventListener("click", event => {
-    //     likes.innerHTML = `likes: ${bagelInfo.like_count++}`
-    // })
-
-    settingBagelDeleteButton(bagel).addEventListener('click', event => {
-        console.log(card)
+    deleteButton.addEventListener('click', event => {
+        console.log(event)
         card.remove()
          
         fetch(url + bagel.id, {
             method: "DELETE"
         })
     })
+
+    document.body.append(card)
 }
 
 function settingBagelName(bagel) {
@@ -75,14 +76,14 @@ function settingBagelRating(bagel) {
     return rating
 }
 
-function settingBagelLikes(bagel,likes) {
+function settingBagelLikes(likes) {
     console.log(likes)
     likes.innerHTML = `likes: ${bagelInfo.like_count}`
 
     return likes
 }
 
-function settingBagelLikeButton(bagel, likes) {
+function settingBagelLikeButton(likes) {
     const likeButton = document.createElement('button')
     likeButton.textContent = "<3"
     likeButton.addEventListener("click", event => {
@@ -92,7 +93,7 @@ function settingBagelLikeButton(bagel, likes) {
     return likeButton
 }
 
-function settingBagelDeleteButton(bagel) {
+function settingBagelDeleteButton() {
     const deleteButton = document.createElement('button')
     deleteButton.textContent = "Delete"
 
